@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:tcc/controller/controller.dart';
+import 'package:tcc/pages/login_page.dart';
 import 'package:tcc/pages/select_login_page.dart';
 import 'package:tcc/pages/students/home_students_page.dart';
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Firebase',
       home: ChangeNotifierProvider(
-        child: SelectLoginPage(),
+        child: LoginPage(),
         create: (context) => Controller(),
       ),
     );
