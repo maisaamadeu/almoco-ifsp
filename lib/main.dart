@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tcc/screens/home_student_screen.dart';
+import 'package:tcc/screens/login_screen.dart';
+import 'package:tcc/screens/splash_screen.dart';
 
 void main() async {
   runApp(const MyApp());
