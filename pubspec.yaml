@@ -41,6 +41,8 @@ dependencies:
   msh_checkbox: ^2.0.1
   flutter_svg: ^0.22.0
   shared_preferences: ^2.1.0
+  date_range: ^1.0.5
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:

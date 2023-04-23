@@ -34,5 +34,64 @@ class FirebaseService {
     }
   }
 
-  Future<void> getMenu() async {}
+  Future<Map<String, dynamic>?> getMenu(DateTime now) async {
+    final startOfCurrentWeek = DateTime(
+      now.year,
+      now.month,
+      now.day - now.weekday + 1,
+      0,
+      0,
+      0,
+      0,
+      0,
+    );
+    final endOfCurrentWeek = DateTime(
+      now.year,
+      now.month,
+      now.day - now.weekday + 5,
+      23,
+      59,
+      59,
+      999,
+      999,
+    );
+    final startOfCurrentWeekTimestamp = Timestamp.fromDate(startOfCurrentWeek);
+    final endOfCurrentWeekTimestamp = Timestamp.fromDate(endOfCurrentWeek);
+
+    final weekDataQuery = FirebaseFirestore.instance.collection('menu');
+
+    final querySnapshot = await weekDataQuery.get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      for (var doc in querySnapshot.docs) {
+        if ((doc.data()['start_of_the_week'] as Timestamp).seconds ==
+            startOfCurrentWeekTimestamp.seconds) {
+          return doc.data();
+        }
+      }
+    }
+
+    return null;
+  }
+
+  Future<void> duplicateDocument() async {
+    try {
+      // Recupera o documento original da coleção
+      final DocumentSnapshot originalDocument = await FirebaseFirestore.instance
+          .collection('menu')
+          .doc('3ZHH6A7KPzYkkeTrRrzo')
+          .get();
+      final Object? originalData = originalDocument.data();
+
+      // Checa se já existe um documento com esse nome e incrementa um número se necessário
+      DocumentReference newDocumentRef =
+          FirebaseFirestore.instance.collection('menu').doc();
+
+      // Duplica o documento original com o novo nome
+      await newDocumentRef.set(originalData);
+      print('Documento duplicado com sucesso!');
+    } catch (e) {
+      print('Erro ao duplicar documento: $e');
+    }
+  }
 }
