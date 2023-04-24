@@ -1,15 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:tcc/default_colors.dart';
+import 'package:tcc/service/firebase_service.dart';
 import 'package:tcc/widgets/custom_button.dart';
 import 'package:tcc/widgets/custom_input.dart';
 
-class EditMenuScreen extends StatelessWidget {
-  EditMenuScreen({super.key});
+class EditMenuScreen extends StatefulWidget {
+  const EditMenuScreen(
+      {super.key,
+      required this.index,
+      required this.mainCourse,
+      required this.fruit,
+      required this.salad});
 
+  final int index;
+  final String mainCourse;
+  final String fruit;
+  final String salad;
+
+  @override
+  State<EditMenuScreen> createState() => _EditMenuScreenState();
+}
+
+class _EditMenuScreenState extends State<EditMenuScreen> {
   TextEditingController mainCourseController = TextEditingController();
   TextEditingController saladController = TextEditingController();
   TextEditingController fruitController = TextEditingController();
+
+  @override
+  void initState() {
+    mainCourseController.text = widget.mainCourse;
+    saladController.text = widget.salad;
+    fruitController.text = widget.fruit;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,8 +118,10 @@ class EditMenuScreen extends StatelessWidget {
                             Expanded(
                                 child: CustomButton(
                               labelText: 'Salvar',
-                              color: defaultGreen,
-                              function: () {},
+                              color: defaultDarkGreen,
+                              function: () {
+                                FirebaseService().editMenu();
+                              },
                             )),
 
                             //Space
@@ -105,11 +131,14 @@ class EditMenuScreen extends StatelessWidget {
 
                             //Cancel
                             Expanded(
-                                child: CustomButton(
-                              labelText: 'Cancelar',
-                              color: defaultRed,
-                              function: () {},
-                            )),
+                              child: CustomButton(
+                                labelText: 'Cancelar',
+                                color: defaultRed,
+                                function: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ),
                           ],
                         ),
                       ),

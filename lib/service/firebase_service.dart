@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:tcc/controllers/document_controller.dart';
 import 'package:tcc/screens/home_employee_screen.dart';
 import 'package:tcc/screens/home_student_screen.dart';
 
 enum UserType { student, employee }
+
+final DocumentController documentController = DocumentController();
 
 class FirebaseService {
   Future<void> initFirebase() async {
@@ -23,12 +26,25 @@ class FirebaseService {
         .get();
 
     if (querySnapshot.docs.isNotEmpty && context.mounted) {
+      print((querySnapshot.docs[0].data() as Map)['first_name']);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => userType == UserType.student
-              ? const HomeStudentScreen()
-              : const HomeEmployeeScreen(),
+              ? HomeStudentScreen(
+                  firstName:
+                      (querySnapshot.docs[0].data() as Map)['first_name'],
+                  lastName: (querySnapshot.docs[0].data() as Map)['last_name'],
+                  registration:
+                      (querySnapshot.docs[0].data() as Map)['registration'],
+                )
+              : HomeEmployeeScreen(
+                  firstName:
+                      (querySnapshot.docs[0].data() as Map)['first_name'],
+                  lastName: (querySnapshot.docs[0].data() as Map)['last_name'],
+                  registration:
+                      (querySnapshot.docs[0].data() as Map)['registration'],
+                ),
         ),
       );
     }
@@ -66,12 +82,32 @@ class FirebaseService {
       for (var doc in querySnapshot.docs) {
         if ((doc.data()['start_of_the_week'] as Timestamp).seconds ==
             startOfCurrentWeekTimestamp.seconds) {
+          documentController.setDocumentID(doc.id);
+          print(documentController.documentID);
           return doc.data();
         }
       }
     }
 
     return null;
+  }
+
+  Future<void> editMenu({
+    String? mainCourse,
+    String? salad,
+    String? fruit,
+  }) async {
+    print(DocumentController().documentID);
+    if (DocumentController().documentID.isNotEmpty) {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('menu')
+          .doc(DocumentController().documentID)
+          .get();
+
+      print(querySnapshot);
+    } else {
+      print('Está vazio');
+    }
   }
 
   Future<void> duplicateDocument() async {

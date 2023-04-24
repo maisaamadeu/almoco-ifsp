@@ -2,13 +2,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:tcc/default_colors.dart';
 import 'package:tcc/service/firebase_service.dart';
 import 'package:tcc/widgets/custom_card.dart';
 
 class HomeStudentScreen extends StatefulWidget {
-  const HomeStudentScreen({super.key});
+  const HomeStudentScreen(
+      {super.key,
+      required this.registration,
+      required this.firstName,
+      required this.lastName});
+
+  final String registration;
+  final String firstName;
+  final String lastName;
 
   @override
   State<HomeStudentScreen> createState() => _HomeStudentScreenState();
@@ -18,6 +25,7 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
   late DateTime now;
   late DateTime startOfCurrentWeek;
   late DateTime endOfCurrentWeek;
+  late List<String> dates;
 
   @override
   void initState() {
@@ -43,6 +51,7 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
       999,
     );
     FirebaseService().getMenu(now);
+    dates = getDates(startOfCurrentWeek, endOfCurrentWeek);
     super.initState();
   }
 
@@ -104,11 +113,11 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 //Title
-                                const SizedBox(
+                                SizedBox(
                                   width: 350,
                                   child: Text(
-                                    'Seja Bem-Vindo(a), selecione abaixo quais dias irá comer!',
-                                    style: TextStyle(
+                                    'Seja Bem-Vindo(a) ${widget.firstName} ${widget.lastName}, selecione abaixo quais dias irá comer!',
+                                    style: const TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w400,
                                       fontSize: 32,
@@ -124,7 +133,35 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
                                   child: Row(
                                     children: [
                                       IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          setState(() {
+                                            now = now.subtract(
+                                                const Duration(days: 7));
+                                            startOfCurrentWeek = DateTime(
+                                              now.year,
+                                              now.month,
+                                              now.day - now.weekday + 1,
+                                              0,
+                                              0,
+                                              0,
+                                              0,
+                                              0,
+                                            );
+                                            endOfCurrentWeek = DateTime(
+                                              now.year,
+                                              now.month,
+                                              now.day - now.weekday + 5,
+                                              23,
+                                              59,
+                                              59,
+                                              999,
+                                              999,
+                                            );
+                                            FirebaseService().getMenu(now);
+                                            dates = getDates(startOfCurrentWeek,
+                                                endOfCurrentWeek);
+                                          });
+                                        },
                                         icon: const Icon(
                                           Icons.arrow_back,
                                           size: 24,
@@ -138,7 +175,35 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
                                         ),
                                       ),
                                       IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          setState(() {
+                                            now = now
+                                                .add(const Duration(days: 7));
+                                            startOfCurrentWeek = DateTime(
+                                              now.year,
+                                              now.month,
+                                              now.day - now.weekday + 1,
+                                              0,
+                                              0,
+                                              0,
+                                              0,
+                                              0,
+                                            );
+                                            endOfCurrentWeek = DateTime(
+                                              now.year,
+                                              now.month,
+                                              now.day - now.weekday + 5,
+                                              23,
+                                              59,
+                                              59,
+                                              999,
+                                              999,
+                                            );
+                                            FirebaseService().getMenu(now);
+                                            dates = getDates(startOfCurrentWeek,
+                                                endOfCurrentWeek);
+                                          });
+                                        },
                                         icon: const Icon(
                                           Icons.arrow_forward,
                                           size: 24,
@@ -170,16 +235,22 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
                                                       .length,
                                               itemBuilder: (context, i) {
                                                 return CustomCard(
-                                                    doc: currentWeekData[
-                                                        'menu_days'][i]);
+                                                  doc: currentWeekData[
+                                                      'menu_days'][i],
+                                                  date: dates[i],
+                                                  index: i,
+                                                );
                                               },
                                             ),
                                           ),
                                         ],
                                       );
                                     } else {
-                                      return const Text(
-                                          'Sem dados para mostrar');
+                                      return const SizedBox(
+                                        width: 350,
+                                        child: Text(
+                                            'Está semana não encontrada. Pedimos desculpa pelo incoveniente.'),
+                                      );
                                     }
                                   },
                                 ),
@@ -202,5 +273,20 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
     final dateFormat = DateFormat('dd/MM/yyyy');
     final formattedDate = dateFormat.format(date);
     return formattedDate;
+  }
+
+  List<String> getDates(DateTime startDate, DateTime endDate) {
+    final List<String> dates = [];
+
+    // Adiciona um dia por vez até chegar à data final
+    for (DateTime date = startDate;
+        date.isBefore(endDate) || date.isAtSameMomentAs(endDate);
+        date = date.add(const Duration(days: 1))) {
+      // Converte a data para uma string no formato desejado
+      final formattedDate = DateFormat('dd/MM/yyyy').format(date);
+      dates.add(formattedDate);
+    }
+
+    return dates;
   }
 }

@@ -3,11 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:tcc/default_colors.dart';
+import 'package:tcc/screens/edit_menu_screen.dart';
 
 class CustomCard extends StatelessWidget {
-  const CustomCard({super.key, required this.doc});
+  const CustomCard(
+      {super.key,
+      required this.doc,
+      required this.date,
+      this.isEmployee,
+      required this.index});
 
   final Map<String, dynamic> doc;
+  final int index;
+  final String date;
+  final bool? isEmployee;
 
   @override
   Widget build(BuildContext context) {
@@ -23,158 +32,176 @@ class CustomCard extends StatelessWidget {
             horizontal: 15,
             vertical: 15,
           ),
-          child: SizedBox(
-            height: 150,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  width: 250,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      //Day of Week
-                      const Text(
-                        '10/04/2023 - Segunda-Feira',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15,
-                        ),
-                      ),
-
-                      //Space of Elements
-                      const SizedBox(
-                        height: 5,
-                      ),
-
-                      //Type
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: const [
-                          Text(
-                            'Atividade: ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15,
-                            ),
-                          ),
-                          Text(
-                            'Almoço',
-                            style: TextStyle(
-                              fontSize: 15,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      //Space of Elements
-                      const SizedBox(
-                        height: 5,
-                      ),
-
-                      //Principal Food
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Prato Principal: ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 130,
-                            child: Text(
-                              doc['main_course'] != null &&
-                                      doc['main_course'] != ''
-                                  ? doc['main_course']
-                                  : 'Nada informado',
-                              style: const TextStyle(
-                                fontSize: 15,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      //Space of Elements
-                      const SizedBox(
-                        height: 5,
-                      ),
-
-                      //Salad
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Salada: ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15,
-                            ),
-                          ),
-                          Text(
-                            doc['salad'] != null && doc['salad'] != ''
-                                ? doc['salad']
-                                : 'Nada informado',
-                            style: const TextStyle(
-                              fontSize: 15,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      //Space of Elements
-                      const SizedBox(
-                        height: 5,
-                      ),
-
-                      //Fruit
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Fruta: ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15,
-                            ),
-                          ),
-                          Text(
-                            doc['fruit'] != null && doc['fruit'] != ''
-                                ? doc['fruit']
-                                : 'Nada informado',
-                            style: const TextStyle(
-                              fontSize: 15,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: 250,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    MSHCheckbox(
-                      size: 40,
-                      value: true,
-                      colorConfig: MSHColorConfig.fromCheckedUncheckedDisabled(
-                        checkedColor: defaultGreen,
-                        disabledColor: defaultRed,
-                        uncheckedColor: defaultRed,
+                    //Day of Week
+                    Text(
+                      '$date - ${dayOfWeek(date)}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15,
                       ),
-                      style: MSHCheckboxStyle.fillFade,
-                      onChanged: (selected) {},
+                    ),
+
+                    //Space of Elements
+                    const SizedBox(
+                      height: 5,
+                    ),
+
+                    //Type
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: const [
+                        Text(
+                          'Atividade: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(
+                          'Almoço',
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    //Space of Elements
+                    const SizedBox(
+                      height: 5,
+                    ),
+
+                    //Principal Food
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Prato Principal: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 130,
+                          child: Text(
+                            doc['main_course'] != null &&
+                                    doc['main_course'] != ''
+                                ? doc['main_course']
+                                : 'Nada informado',
+                            style: const TextStyle(
+                              fontSize: 15,
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    //Space of Elements
+                    const SizedBox(
+                      height: 5,
+                    ),
+
+                    //Salad
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Salada: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(
+                          doc['salad'] != null && doc['salad'] != ''
+                              ? doc['salad']
+                              : 'Nada informado',
+                          style: const TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    //Space of Elements
+                    const SizedBox(
+                      height: 5,
+                    ),
+
+                    //Fruit
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Fruta: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(
+                          doc['fruit'] != null && doc['fruit'] != ''
+                              ? doc['fruit']
+                              : 'Nada informado',
+                          style: const TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  isEmployee == true
+                      ? MSHCheckbox(
+                          size: 40,
+                          value: true,
+                          colorConfig:
+                              MSHColorConfig.fromCheckedUncheckedDisabled(
+                            checkedColor: defaultGreen,
+                            disabledColor: defaultRed,
+                            uncheckedColor: defaultRed,
+                          ),
+                          style: MSHCheckboxStyle.fillFade,
+                          onChanged: (selected) {},
+                        )
+                      : IconButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => EditMenuScreen(
+                                  index: index,
+                                  fruit: doc['fruit'].toString(),
+                                  mainCourse: doc['main_course'].toString(),
+                                  salad: doc['salad'].toString(),
+                                ),
+                              ),
+                            );
+                          },
+                          icon: Icon(
+                            Icons.edit,
+                            color: defaultGreen,
+                            size: 30,
+                          ),
+                        ),
+                ],
+              ),
+            ],
           ),
         ),
       );
@@ -185,44 +212,41 @@ class CustomCard extends StatelessWidget {
             horizontal: 15,
             vertical: 15,
           ),
-          child: SizedBox(
-            height: 150,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  width: 250,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      //Day of Week
-                      const Text(
-                        '10/04/2023 - Segunda-Feira',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15,
-                        ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: 250,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    //Day of Week
+                    Text(
+                      '$date - ${dayOfWeek(date)}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15,
                       ),
+                    ),
 
-                      //Space of Elements
-                      const SizedBox(
-                        height: 5,
-                      ),
+                    //Space of Elements
+                    const SizedBox(
+                      height: 5,
+                    ),
 
-                      //Day of Week
-                      Text(
-                        'NESTE DIA NÃO HAVERÁ ALMOÇO, PELO MENOS NADA FOI INFORMADO ATÉ O MOMENTO!',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                          color: defaultRed,
-                        ),
+                    //Day of Week
+                    Text(
+                      'NESTE DIA NÃO HAVERÁ ALMOÇO, PELO MENOS NADA FOI INFORMADO OU ESTÁ INCOMPLETO ATÉ O MOMENTO!',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        color: defaultRed,
                       ),
-                    ],
-                  ),
-                )
-              ],
-            ),
+                    ),
+                  ],
+                ),
+              )
+            ],
           ),
         ),
       );
@@ -234,5 +258,17 @@ class CustomCard extends StatelessWidget {
     final dateTime = timestamp.toDate();
     final formattedDate = dateFormat.format(dateTime);
     return formattedDate;
+  }
+
+  String dayOfWeek(String day) {
+    final dayFormat = DateFormat('dd/MM/yyyy').parse(day);
+    String dayOfWeek = DateFormat('EEEE', 'pt_BR').format(dayFormat);
+
+    dayOfWeek = dayOfWeek.replaceAll('-feira', '');
+
+    String formattedDayOfWeek =
+        '${dayOfWeek.replaceFirst(dayOfWeek[0], dayOfWeek[0].toUpperCase())}-Feira';
+
+    return formattedDayOfWeek;
   }
 }
