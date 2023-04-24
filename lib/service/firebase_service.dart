@@ -81,9 +81,10 @@ class FirebaseService {
     if (querySnapshot.docs.isNotEmpty) {
       for (var doc in querySnapshot.docs) {
         if ((doc.data()['start_of_the_week'] as Timestamp).seconds ==
-            startOfCurrentWeekTimestamp.seconds) {
+                startOfCurrentWeekTimestamp.seconds &&
+            (doc.data()['end_of_the_week'] as Timestamp).seconds ==
+                endOfCurrentWeekTimestamp.seconds) {
           documentController.setDocumentID(doc.id);
-          print(documentController.documentID);
           return doc.data();
         }
       }
