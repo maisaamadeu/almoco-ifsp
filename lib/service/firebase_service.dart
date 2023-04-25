@@ -10,6 +10,7 @@ enum UserType { student, employee }
 class FirebaseService {
   Future<void> initFirebase() async {
     await Firebase.initializeApp();
+    // duplicateDocument();
   }
 
   Future<void> login({
@@ -122,47 +123,49 @@ class FirebaseService {
     required String registration,
   }) async {
     if (DocumentController().documentID.isNotEmpty) {
-      var menuRef = FirebaseFirestore.instance
+      var studentsRef = FirebaseFirestore.instance
           .collection('menu')
           .doc(DocumentController().documentID);
 
-      var snapshot = await menuRef.get();
+      var snapshot = await studentsRef.get();
 
       if (snapshot.exists) {
         var data = snapshot.data();
-        var students = data!['students'];
+        List<dynamic> students = data!['menu_days'][index]['students'];
 
-        if (students != null) {
-          for (var student in students) {
-            if (student == registration) {
-              print('é igual');
-            } else {
-              print('não é igual');
-            }
-          }
+        if (students.contains(registration)) {
+          students.remove(registration);
+        } else {
+          students.add(registration);
         }
+
+        await studentsRef.set(data);
       }
     }
   }
 
-  // Future<void> duplicateDocument() async {
-  //   try {
-  //     // Recupera o documento original da coleção
-  //     final DocumentSnapshot originalDocument = await FirebaseFirestore.instance
-  //         .collection('menu')
-  //         .doc('3ZHH6A7KPzYkkeTrRrzo')
-  //         .get();
-  //     final Object? originalData = originalDocument.data();
+  Future<void> addWeek() async {
+    await FirebaseFirestore.instance.collection('menu').add({});
+  }
 
-  //     // Checa se já existe um documento com esse nome e incrementa um número se necessário
-  //     DocumentReference newDocumentRef =
-  //         FirebaseFirestore.instance.collection('menu').doc();
+  Future<void> duplicateDocument() async {
+    try {
+      // Recupera o documento original da coleção
+      final DocumentSnapshot originalDocument = await FirebaseFirestore.instance
+          .collection('menu')
+          .doc('3ZHH6A7KPzYkkeTrRrzo')
+          .get();
+      final Object? originalData = originalDocument.data();
 
-  //     // Duplica o documento original com o novo nome
-  //     await newDocumentRef.set(originalData);
-  //     print('Documento duplicado com sucesso!');
-  //   } catch (e) {
-  //     print('Erro ao duplicar documento: $e');
-  //   }
-  // }
+      // Checa se já existe um documento com esse nome e incrementa um número se necessário
+      DocumentReference newDocumentRef =
+          FirebaseFirestore.instance.collection('menu').doc();
+
+      // Duplica o documento original com o novo nome
+      await newDocumentRef.set(originalData);
+      print('Documento duplicado com sucesso!');
+    } catch (e) {
+      print('Erro ao duplicar documento: $e');
+    }
+  }
 }

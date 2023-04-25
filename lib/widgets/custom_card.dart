@@ -13,13 +13,17 @@ class CustomCard extends StatelessWidget {
       required this.date,
       this.isEmployee,
       required this.index,
-      required this.registration});
+      required this.registration,
+      this.isEat,
+      this.studentsEat});
 
   final Map<String, dynamic> doc;
   final int index;
   final String date;
   final bool? isEmployee;
   final String registration;
+  final bool? isEat;
+  final int? studentsEat;
 
   @override
   Widget build(BuildContext context) {
@@ -164,6 +168,30 @@ class CustomCard extends StatelessWidget {
                         ),
                       ],
                     ),
+
+                    //Total
+                    isEmployee == true
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Alunos: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              Text(
+                                studentsEat != null
+                                    ? studentsEat.toString()
+                                    : 'Erro',
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Container(),
                   ],
                 ),
               ),
@@ -173,7 +201,7 @@ class CustomCard extends StatelessWidget {
                   isEmployee == false
                       ? MSHCheckbox(
                           size: 40,
-                          value: true,
+                          value: isEat!,
                           colorConfig:
                               MSHColorConfig.fromCheckedUncheckedDisabled(
                             checkedColor: defaultGreen,

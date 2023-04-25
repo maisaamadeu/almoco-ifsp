@@ -237,6 +237,7 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
                                       return const CircularProgressIndicator();
                                     } else if (snapshot.hasData) {
                                       final currentWeekData = snapshot.data!;
+
                                       return Column(
                                         children: [
                                           //List of meals
@@ -258,6 +259,12 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
                                                   index: i,
                                                   registration:
                                                       widget.registration,
+                                                  isEat: (currentWeekData[
+                                                                  'menu_days']
+                                                              [i]['students']
+                                                          as List<dynamic>)
+                                                      .contains(
+                                                          widget.registration),
                                                 );
                                               },
                                             ),

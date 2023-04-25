@@ -77,6 +77,24 @@ class _HomeEmployeeScreenState extends State<HomeEmployeeScreen> {
               color: Colors.black,
             ),
           ),
+          InkWell(
+            onTap: () {},
+            child: Ink(
+              padding: const EdgeInsets.only(right: 10),
+              child: Row(
+                children: const [
+                  Icon(
+                    Icons.add,
+                    color: Colors.black,
+                  ),
+                  Text(
+                    'Adicionar Semana',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
       body: SafeArea(
@@ -257,6 +275,12 @@ class _HomeEmployeeScreenState extends State<HomeEmployeeScreen> {
                                                   index: i,
                                                   registration:
                                                       widget.registration,
+                                                  isEmployee: true,
+                                                  studentsEat: (currentWeekData[
+                                                                  'menu_days']
+                                                              [i]['students']
+                                                          as List<dynamic>)
+                                                      .length,
                                                 );
                                               },
                                             ),
