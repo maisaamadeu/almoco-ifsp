@@ -95,7 +95,6 @@ class FirebaseService {
     String? salad,
     String? fruit,
     required int index,
-    required Function() showErrorDialog,
   }) async {
     if (DocumentController().documentID.isNotEmpty) {
       var menuRef = FirebaseFirestore.instance
@@ -105,37 +104,65 @@ class FirebaseService {
       var snapshot = await menuRef.get();
 
       if (snapshot.exists) {
-        var mapa = snapshot.data();
-        var menuDays = mapa!['menu_days'];
+        var data = snapshot.data();
+        var menuDays = data!['menu_days'];
         menuDays[index]['salad'] = salad;
         menuDays[index]['main_course'] = mainCourse;
         menuDays[index]['fruit'] = fruit;
 
-        await menuRef.set(mapa);
+        await menuRef.set(data);
       } else {}
     } else {
       print('Está vazio');
     }
   }
 
-  Future<void> duplicateDocument() async {
-    try {
-      // Recupera o documento original da coleção
-      final DocumentSnapshot originalDocument = await FirebaseFirestore.instance
+  Future<void> addOrRemoveStudent({
+    required int index,
+    required String registration,
+  }) async {
+    if (DocumentController().documentID.isNotEmpty) {
+      var menuRef = FirebaseFirestore.instance
           .collection('menu')
-          .doc('3ZHH6A7KPzYkkeTrRrzo')
-          .get();
-      final Object? originalData = originalDocument.data();
+          .doc(DocumentController().documentID);
 
-      // Checa se já existe um documento com esse nome e incrementa um número se necessário
-      DocumentReference newDocumentRef =
-          FirebaseFirestore.instance.collection('menu').doc();
+      var snapshot = await menuRef.get();
 
-      // Duplica o documento original com o novo nome
-      await newDocumentRef.set(originalData);
-      print('Documento duplicado com sucesso!');
-    } catch (e) {
-      print('Erro ao duplicar documento: $e');
+      if (snapshot.exists) {
+        var data = snapshot.data();
+        var students = data!['students'];
+
+        if (students != null) {
+          for (var student in students) {
+            if (student == registration) {
+              print('é igual');
+            } else {
+              print('não é igual');
+            }
+          }
+        }
+      }
     }
   }
+
+  // Future<void> duplicateDocument() async {
+  //   try {
+  //     // Recupera o documento original da coleção
+  //     final DocumentSnapshot originalDocument = await FirebaseFirestore.instance
+  //         .collection('menu')
+  //         .doc('3ZHH6A7KPzYkkeTrRrzo')
+  //         .get();
+  //     final Object? originalData = originalDocument.data();
+
+  //     // Checa se já existe um documento com esse nome e incrementa um número se necessário
+  //     DocumentReference newDocumentRef =
+  //         FirebaseFirestore.instance.collection('menu').doc();
+
+  //     // Duplica o documento original com o novo nome
+  //     await newDocumentRef.set(originalData);
+  //     print('Documento duplicado com sucesso!');
+  //   } catch (e) {
+  //     print('Erro ao duplicar documento: $e');
+  //   }
+  // }
 }

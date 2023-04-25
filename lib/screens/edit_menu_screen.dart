@@ -121,11 +121,11 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                               color: defaultDarkGreen,
                               function: () async {
                                 await FirebaseService().editMenu(
-                                    index: widget.index,
-                                    fruit: fruitController.text,
-                                    mainCourse: mainCourseController.text,
-                                    salad: saladController.text,
-                                    showErrorDialog: _showErrorDialog);
+                                  index: widget.index,
+                                  fruit: fruitController.text,
+                                  mainCourse: mainCourseController.text,
+                                  salad: saladController.text,
+                                );
                                 if (context.mounted) {
                                   Navigator.pop(context);
                                 }

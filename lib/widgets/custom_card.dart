@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:tcc/default_colors.dart';
 import 'package:tcc/screens/edit_menu_screen.dart';
+import 'package:tcc/service/firebase_service.dart';
 
 class CustomCard extends StatelessWidget {
   const CustomCard(
@@ -11,12 +12,14 @@ class CustomCard extends StatelessWidget {
       required this.doc,
       required this.date,
       this.isEmployee,
-      required this.index});
+      required this.index,
+      required this.registration});
 
   final Map<String, dynamic> doc;
   final int index;
   final String date;
   final bool? isEmployee;
+  final String registration;
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +170,7 @@ class CustomCard extends StatelessWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  isEmployee == true
+                  isEmployee == false
                       ? MSHCheckbox(
                           size: 40,
                           value: true,
@@ -178,7 +181,12 @@ class CustomCard extends StatelessWidget {
                             uncheckedColor: defaultRed,
                           ),
                           style: MSHCheckboxStyle.fillFade,
-                          onChanged: (selected) {},
+                          onChanged: (selected) {
+                            FirebaseService().addOrRemoveStudent(
+                              index: index,
+                              registration: registration,
+                            );
+                          },
                         )
                       : IconButton(
                           onPressed: () {

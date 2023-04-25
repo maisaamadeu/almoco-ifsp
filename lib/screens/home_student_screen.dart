@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:tcc/default_colors.dart';
+import 'package:tcc/screens/login_screen.dart';
 import 'package:tcc/service/firebase_service.dart';
 import 'package:tcc/widgets/custom_card.dart';
 
@@ -62,6 +63,21 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
       appBar: AppBar(
         backgroundColor: defaultBackground,
         elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => const LoginScreen(),
+                ),
+              );
+            },
+            icon: const Icon(
+              Icons.exit_to_app,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Stack(
@@ -238,7 +254,10 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
                                                   doc: currentWeekData[
                                                       'menu_days'][i],
                                                   date: dates[i],
+                                                  isEmployee: false,
                                                   index: i,
+                                                  registration:
+                                                      widget.registration,
                                                 );
                                               },
                                             ),
