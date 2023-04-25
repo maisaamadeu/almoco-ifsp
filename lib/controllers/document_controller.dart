@@ -1,14 +1,11 @@
-import 'package:mobx/mobx.dart';
-part 'document_controller.g.dart';
+class DocumentController {
+  static final DocumentController _instance = DocumentController._internal();
 
-class DocumentController = DocumentControllerBase with _$DocumentController;
+  String documentID = "Valor inicial";
 
-abstract class DocumentControllerBase with Store {
-  @observable
-  String documentID = '';
-
-  @action
-  setDocumentID(String newDocumentID) {
-    documentID = newDocumentID;
+  factory DocumentController() {
+    return _instance;
   }
+
+  DocumentController._internal();
 }

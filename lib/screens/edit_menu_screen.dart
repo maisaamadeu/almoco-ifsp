@@ -119,8 +119,16 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                                 child: CustomButton(
                               labelText: 'Salvar',
                               color: defaultDarkGreen,
-                              function: () {
-                                FirebaseService().editMenu();
+                              function: () async {
+                                await FirebaseService().editMenu(
+                                    index: widget.index,
+                                    fruit: fruitController.text,
+                                    mainCourse: mainCourseController.text,
+                                    salad: saladController.text,
+                                    showErrorDialog: _showErrorDialog);
+                                if (context.mounted) {
+                                  Navigator.pop(context);
+                                }
                               },
                             )),
 
@@ -150,6 +158,26 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Erro"),
+          content: Text("Ocorreu um erro. Tente novamente mais tarde."),
+          actions: [
+            ElevatedButton(
+              child: Text("Fechar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

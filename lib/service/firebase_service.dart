@@ -7,8 +7,6 @@ import 'package:tcc/screens/home_student_screen.dart';
 
 enum UserType { student, employee }
 
-final DocumentController documentController = DocumentController();
-
 class FirebaseService {
   Future<void> initFirebase() async {
     await Firebase.initializeApp();
@@ -26,7 +24,6 @@ class FirebaseService {
         .get();
 
     if (querySnapshot.docs.isNotEmpty && context.mounted) {
-      print((querySnapshot.docs[0].data() as Map)['first_name']);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -84,7 +81,7 @@ class FirebaseService {
                 startOfCurrentWeekTimestamp.seconds &&
             (doc.data()['end_of_the_week'] as Timestamp).seconds ==
                 endOfCurrentWeekTimestamp.seconds) {
-          documentController.setDocumentID(doc.id);
+          DocumentController().documentID = doc.id;
           return doc.data();
         }
       }
@@ -97,15 +94,25 @@ class FirebaseService {
     String? mainCourse,
     String? salad,
     String? fruit,
+    required int index,
+    required Function() showErrorDialog,
   }) async {
-    print(DocumentController().documentID);
     if (DocumentController().documentID.isNotEmpty) {
-      final querySnapshot = await FirebaseFirestore.instance
+      var menuRef = FirebaseFirestore.instance
           .collection('menu')
-          .doc(DocumentController().documentID)
-          .get();
+          .doc(DocumentController().documentID);
 
-      print(querySnapshot);
+      var snapshot = await menuRef.get();
+
+      if (snapshot.exists) {
+        var mapa = snapshot.data();
+        var menuDays = mapa!['menu_days'];
+        menuDays[index]['salad'] = salad;
+        menuDays[index]['main_course'] = mainCourse;
+        menuDays[index]['fruit'] = fruit;
+
+        await menuRef.set(mapa);
+      } else {}
     } else {
       print('Está vazio');
     }
