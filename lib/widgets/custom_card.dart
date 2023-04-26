@@ -281,7 +281,26 @@ class CustomCard extends StatelessWidget {
                     ),
                   ],
                 ),
-              )
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => EditMenuScreen(
+                        index: index,
+                        fruit: doc['fruit'].toString(),
+                        mainCourse: doc['main_course'].toString(),
+                        salad: doc['salad'].toString(),
+                      ),
+                    ),
+                  );
+                },
+                icon: Icon(
+                  Icons.edit,
+                  color: defaultRed,
+                  size: 30,
+                ),
+              ),
             ],
           ),
         ),

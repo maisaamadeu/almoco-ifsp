@@ -76,7 +76,18 @@ class FirebaseService {
 
     final querySnapshot = await weekDataQuery.get();
 
+    List<dynamic> start = [];
+    List<dynamic> end = [];
+
     if (querySnapshot.docs.isNotEmpty) {
+      for (var doc in querySnapshot.docs) {
+        start.add((doc.data()['start_of_the_week'] as Timestamp).toDate());
+        end.add((doc.data()['end_of_the_week'] as Timestamp).toDate());
+      }
+
+      DocumentController().documentsStarted = start;
+      DocumentController().documentsEnd = end;
+
       for (var doc in querySnapshot.docs) {
         if ((doc.data()['start_of_the_week'] as Timestamp).seconds ==
                 startOfCurrentWeekTimestamp.seconds &&
@@ -145,7 +156,32 @@ class FirebaseService {
   }
 
   Future<void> addWeek() async {
-    await FirebaseFirestore.instance.collection('menu').add({});
+    DocumentController().documentsStarted.sort((a, b) => b.compareTo(a));
+    DocumentController().documentsEnd.sort((a, b) => b.compareTo(a));
+
+    Timestamp startDay = Timestamp.fromDate(
+        (DocumentController().documentsStarted[0] as DateTime)
+            .add(const Duration(days: 7)));
+    Timestamp endDay = Timestamp.fromDate(
+        (DocumentController().documentsEnd[0] as DateTime)
+            .add(const Duration(days: 7)));
+
+    final menuRef = FirebaseFirestore.instance.collection('menu');
+
+    final newWeek = {
+      'end_of_the_week': endDay,
+      'start_of_the_week': startDay,
+      'menu_days': [
+        {'salad': null, 'fruit': null, 'main_course': null, 'students': []},
+        {'salad': null, 'fruit': null, 'main_course': null, 'students': []},
+        {'salad': null, 'fruit': null, 'main_course': null, 'students': []},
+        {'salad': null, 'fruit': null, 'main_course': null, 'students': []},
+        {'salad': null, 'fruit': null, 'main_course': null, 'students': []}
+      ]
+    };
+
+    await menuRef.add(newWeek);
+    print('Deu certo!');
   }
 
   Future<void> duplicateDocument() async {
