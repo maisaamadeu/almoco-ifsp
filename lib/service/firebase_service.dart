@@ -89,8 +89,6 @@ class FirebaseService {
       DocumentController().documentsEnd = end;
 
       for (var doc in querySnapshot.docs) {
-        print(
-            '${(doc.data()['start_of_the_week'] as Timestamp).toDate()} é igual a ${startOfCurrentWeek} ? ${true}');
         if ((doc.data()['end_of_the_week'] as Timestamp).seconds ==
             endOfCurrentWeekTimestamp.seconds) {
           DocumentController().documentID = doc.id;
@@ -138,19 +136,28 @@ class FirebaseService {
           .collection('menu')
           .doc(DocumentController().documentID);
 
-      var snapshot = await studentsRef.get();
+      try {
+        await FirebaseFirestore.instance.runTransaction((transaction) async {
+          var snapshot = await transaction.get(studentsRef);
 
-      if (snapshot.exists) {
-        var data = snapshot.data();
-        List<dynamic> students = data!['menu_days'][index]['students'];
+          if (snapshot.exists) {
+            var data = snapshot.data();
+            List<dynamic> students = data!['menu_days'][index]['students'];
 
-        if (students.contains(registration)) {
-          students.remove(registration);
-        } else {
-          students.add(registration);
-        }
+            if (students.contains(registration)) {
+              students.remove(registration);
+            } else {
+              students.add(registration);
+            }
 
-        await studentsRef.set(data);
+            transaction.update(studentsRef, {
+              'menu_days.$index.students': students,
+            });
+          }
+        });
+      } catch (e) {
+        // Trate qualquer erro de transação aqui
+        print('Erro na transação: $e');
       }
     }
   }
@@ -159,29 +166,25 @@ class FirebaseService {
     DocumentController().documentsStarted.sort((a, b) => b.compareTo(a));
     DocumentController().documentsEnd.sort((a, b) => b.compareTo(a));
 
-    Timestamp startDay = Timestamp.fromDate(
-        (DocumentController().documentsStarted[0] as DateTime)
-            .add(const Duration(days: 7)));
-    Timestamp endDay = Timestamp.fromDate(
-        (DocumentController().documentsEnd[0] as DateTime)
-            .add(const Duration(days: 7)));
+    DateTime startDay = (DocumentController().documentsStarted[0] as DateTime)
+        .add(const Duration(days: 7));
 
-    final menuRef = FirebaseFirestore.instance.collection('menu');
+    List<Map<String, dynamic>> menuDays = [];
 
-    final newWeek = {
-      'end_of_the_week': endDay,
-      'start_of_the_week': startDay,
-      'menu_days': [
-        {'salad': null, 'fruit': null, 'main_course': null, 'students': []},
-        {'salad': null, 'fruit': null, 'main_course': null, 'students': []},
-        {'salad': null, 'fruit': null, 'main_course': null, 'students': []},
-        {'salad': null, 'fruit': null, 'main_course': null, 'students': []},
-        {'salad': null, 'fruit': null, 'main_course': null, 'students': []}
-      ]
-    };
+    for (int i = 0; i < 5; i++) {
+      DateTime day = startDay.add(Duration(days: i));
+      Timestamp dayTimestamp = Timestamp.fromDate(day);
 
-    await menuRef.add(newWeek);
-    print('Deu certo!');
+      Map<String, dynamic> menuDay = {
+        'date': dayTimestamp,
+        'salad': null,
+        'fruit': null,
+        'main_course': null,
+        'students': [],
+      };
+
+      menuDays.add(menuDay);
+    }
   }
 
   Future<void> duplicateDocument() async {

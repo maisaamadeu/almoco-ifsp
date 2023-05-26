@@ -25,8 +25,23 @@ class CustomCard extends StatelessWidget {
   final bool? isEat;
   final int? studentsEat;
 
+  bool isEventDatePassed() {
+    final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+    final DateTime now = DateTime.now();
+    final DateTime parsedEventDate = dateFormat.parse(date);
+
+    if (parsedEventDate.isBefore(now)){
+      if(now.hour < 9) {
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
+
     if (doc['main_course'] != null &&
         doc['main_course'] != '' &&
         doc['salad'] != null &&
@@ -198,6 +213,7 @@ class CustomCard extends StatelessWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  !isEventDatePassed() ?
                   isEmployee == false
                       ? MSHCheckbox(
                           size: 40,
@@ -234,7 +250,7 @@ class CustomCard extends StatelessWidget {
                             color: defaultGreen,
                             size: 30,
                           ),
-                        ),
+                        ) : Container(),
                 ],
               ),
             ],
@@ -282,7 +298,7 @@ class CustomCard extends StatelessWidget {
                   ],
                 ),
               ),
-              IconButton(
+              isEmployee == true ? IconButton(
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
@@ -300,7 +316,7 @@ class CustomCard extends StatelessWidget {
                   color: defaultRed,
                   size: 30,
                 ),
-              ),
+              ) : Container(),
             ],
           ),
         ),

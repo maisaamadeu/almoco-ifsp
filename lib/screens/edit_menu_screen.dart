@@ -27,6 +27,40 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
   TextEditingController saladController = TextEditingController();
   TextEditingController fruitController = TextEditingController();
 
+  void showAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Tem certeza?'),
+          content: Text('Lembre-se, não é possível voltar atrás dessa decisão.'),
+          actions: [
+            TextButton(
+              child: Text('Cancelar', style: TextStyle(color: Colors.red),),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Sim, tenho certeza!'),
+              onPressed: () async {
+                await FirebaseService().editMenu(
+                  index: widget.index,
+                  fruit: fruitController.text,
+                  mainCourse: mainCourseController.text,
+                  salad: saladController.text,
+                );
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     mainCourseController.text = widget.mainCourse;
@@ -119,16 +153,39 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                                 child: CustomButton(
                               labelText: 'Salvar',
                               color: defaultDarkGreen,
-                              function: () async {
-                                await FirebaseService().editMenu(
-                                  index: widget.index,
-                                  fruit: fruitController.text,
-                                  mainCourse: mainCourseController.text,
-                                  salad: saladController.text,
+                              function: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('Tem certeza?'),
+                                      content: Text('Lembre-se, não é possível voltar atrás dessa decisão.'),
+                                      actions: [
+                                        TextButton(
+                                          child: Text('Cancelar', style: TextStyle(color: Colors.red),),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: Text('Sim, tenho certeza!'),
+                                          onPressed: () async {
+                                            await FirebaseService().editMenu(
+                                              index: widget.index,
+                                              fruit: fruitController.text,
+                                              mainCourse: mainCourseController.text,
+                                              salad: saladController.text,
+                                            );
+                                            if (context.mounted) {
+                                              Navigator.pop(context); Navigator.pop(context);
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 );
-                                if (context.mounted) {
-                                  Navigator.pop(context);
-                                }
+
                               },
                             )),
 

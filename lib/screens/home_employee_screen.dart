@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:tcc/controllers/document_controller.dart';
 import 'package:tcc/default_colors.dart';
+import 'package:tcc/screens/delete_menus_screen.dart';
 import 'package:tcc/screens/login_screen.dart';
 import 'package:tcc/service/firebase_service.dart';
 import 'package:tcc/widgets/custom_card.dart';
@@ -91,7 +92,27 @@ class _HomeEmployeeScreenState extends State<HomeEmployeeScreen> {
                     color: Colors.black,
                   ),
                   Text(
-                    'Adicionar Semana',
+                    'Adicionar',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => DeleteMenusScreen(),),);
+            },
+            child: Ink(
+              padding: const EdgeInsets.only(right: 10),
+              child: Row(
+                children: const [
+                  Icon(
+                    Icons.delete_forever,
+                    color: Colors.black,
+                  ),
+                  Text(
+                    'Apagar',
                     style: TextStyle(color: Colors.black),
                   ),
                 ],

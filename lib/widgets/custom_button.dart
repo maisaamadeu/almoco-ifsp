@@ -6,11 +6,11 @@ class CustomButton extends StatefulWidget {
       {super.key,
       required this.labelText,
       required this.color,
-      required this.function});
+       this.function});
 
   final String labelText;
   final Color color;
-  final Function() function;
+  final Function()? function;
 
   @override
   State<CustomButton> createState() => _CustomButtonState();
@@ -37,15 +37,15 @@ class _CustomButtonState extends State<CustomButton> {
                   ),
                 ),
               ),
-              onPressed: () async {
+              onPressed: widget.function != null ? () async {
                 setState(() {
                   _isLoading = true;
                 });
-                await widget.function();
+                await widget.function!();
                 setState(() {
                   _isLoading = false;
                 });
-              },
+              } : null,
               child: Text(widget.labelText),
             ),
     );

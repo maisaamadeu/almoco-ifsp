@@ -19,7 +19,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.19.3 <3.0.0"
+  sdk: "3.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -41,7 +41,6 @@ dependencies:
   msh_checkbox: ^2.0.1
   flutter_svg: ^0.22.0
   shared_preferences: ^2.1.0
-  date_range: ^1.0.5
   intl: ^0.18.1
   mobx: ^2.1.4
   flutter_mobx: ^2.0.6+5

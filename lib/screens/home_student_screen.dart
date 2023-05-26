@@ -143,37 +143,8 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
                                   ),
                                 ),
 
-                                //Select Week
-                                SizedBox(
-                                  width: 350,
-                                  height: 52,
-                                  child: Row(
-                                    children: [
-                                      IconButton(
-                                        onPressed: () => switchWeek(false),
-                                        icon: const Icon(
-                                          Icons.arrow_back,
-                                          size: 24,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Semana ${formatDate(startOfCurrentWeek)} a ${formatDate(endOfCurrentWeek)}',
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      IconButton(
-                                        onPressed: () => switchWeek(true),
-                                        icon: const Icon(
-                                          Icons.arrow_forward,
-                                          size: 24,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
+                                SizedBox(height: 25,)
+,
                                 FutureBuilder<Map<String, dynamic>?>(
                                   future: FirebaseService().getMenu(now),
                                   builder: (context, snapshot) {
@@ -199,7 +170,8 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
                                                 return CustomCard(
                                                   doc: currentWeekData[
                                                       'menu_days'][i],
-                                                  date: datesWeek[i],
+                                                  date: formatTimestamp( currentWeekData[
+                                                  'menu_days'][i]['date'] as Timestamp),
                                                   isEmployee: false,
                                                   index: i,
                                                   registration:
@@ -240,76 +212,13 @@ class _HomeStudentScreenState extends State<HomeStudentScreen> {
     );
   }
 
-  void switchWeek(bool add) {
-    for (var date in add
-        ? DocumentController().documentsStarted
-        : DocumentController().documentsEnd) {
-      var dateZero = DateTime(
-        date.year,
-        date.month,
-        date.day,
-        add ? 00 : 23,
-        add ? 00 : 59,
-        add ? 00 : 59,
-        add ? 00 : 999,
-        add ? 00 : 999,
-      );
-
-      var nowTest = DateTime(
-        add
-            ? now.add(const Duration(days: 7)).year
-            : now.subtract(const Duration(days: 7)).year,
-        add
-            ? now.add(const Duration(days: 7)).month
-            : now.subtract(const Duration(days: 7)).month,
-        add
-            ? now.add(const Duration(days: 7)).day - now.weekday + 1
-            : now.subtract(const Duration(days: 7)).day - now.weekday + 5,
-        add ? 00 : 23,
-        add ? 00 : 59,
-        add ? 00 : 59,
-        add ? 00 : 999,
-        add ? 00 : 999,
-      );
-
-      if (dateZero == nowTest) {
-        setState(() {
-          now = add
-              ? now.add(const Duration(days: 7))
-              : now.subtract(const Duration(days: 7));
-          startOfCurrentWeek = DateTime(
-            now.year,
-            now.month,
-            now.day - now.weekday + 1,
-            0,
-            0,
-            0,
-            0,
-            0,
-          );
-          endOfCurrentWeek = DateTime(
-            now.year,
-            now.month,
-            now.day - now.weekday + 5,
-            23,
-            59,
-            59,
-            999,
-            999,
-          );
-          FirebaseService().getMenu(now);
-          datesWeek = getDates(startOfCurrentWeek, endOfCurrentWeek);
-        });
-        break;
-      }
-    }
-  }
-
-  String formatDate(DateTime date) {
+  String formatTimestamp(Timestamp timestamp) {
     final dateFormat = DateFormat('dd/MM/yyyy');
-    final formattedDate = dateFormat.format(date);
+    final dateTime = timestamp.toDate();
+    final formattedDate = dateFormat.format(dateTime);
     return formattedDate;
   }
+
 
   List<String> getDates(DateTime startDate, DateTime endDate) {
     final List<String> datesWeek = [];
